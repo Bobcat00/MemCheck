@@ -1,0 +1,15 @@
+name: MemCheck
+main: com.bobcat00.memcheck.MemCheck
+version: ${project.version}
+author: Bobcat00
+description: Output memory statistics
+api-version: 1.13
+depend: [Essentials]
+commands:
+  mem:
+    description: Output memory statistics
+    permission: memcheck.mem
+permissions:
+  memcheck.mem:
+    description: Output memory statistics
+    default: op
