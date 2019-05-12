@@ -91,10 +91,10 @@ public class Commands implements CommandExecutor
             
             DecimalFormat df1 = new DecimalFormat("#.0");
             
-            sender.sendMessage(ChatColor.GOLD + "TPS: "   + tpsColor + df1.format(tps)   +
-                               ChatColor.GOLD + " Used: " + ChatColor.RED + used/1048576 + " MB (" + (used*100)/maxMemory + "%)" +
-                               ChatColor.GOLD + " Free: " + ChatColor.RED + free/1048576 + " MB" +
-                               ChatColor.GOLD + " GC: "   + ChatColor.RED + gcAvg        + " ms");
+            sender.sendMessage(ChatColor.GOLD + "TPS: "   + tpsColor + df1.format(tps)    +
+                               ChatColor.GOLD + " Used: " + ChatColor.RED + used/1048576L + " MB (" + (used*100L)/maxMemory + "%)" +
+                               ChatColor.GOLD + " Free: " + ChatColor.RED + free/1048576L + " MB" +
+                               ChatColor.GOLD + " GC: "   + ChatColor.RED + gcAvg         + " ms");
 
             // Normal return
             return true;

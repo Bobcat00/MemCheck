@@ -16,6 +16,10 @@
 
 package com.bobcat00.memcheck;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.util.List;
+
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -35,6 +39,18 @@ public class MemCheck extends JavaPlugin
         
         // Register commands
         this.getCommand("mem").setExecutor(new Commands(this));
+        
+        // Log related items which are unchanging
+        getLogger().info("Number of processors: " + Runtime.getRuntime().availableProcessors());
+        getLogger().info("Maximum memory: " + Runtime.getRuntime().maxMemory()/1048576L + " MB");
+        
+        RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
+        List<String> arguments = runtimeMxBean.getInputArguments();
+        getLogger().info("Command line options: ");
+        for (String str : arguments)
+        {
+            getLogger().info("  " + str);
+        }
     }
         
     @Override

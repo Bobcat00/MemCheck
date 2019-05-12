@@ -23,10 +23,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class GcStatsTask extends BukkitRunnable
 {
-    public long gcAvg = 0; // msec
+    public long gcAvg = 0L; // msec
     
-    private long lastGcCount = 0;
-    private long lastGcTime = 0;
+    private long lastGcCount = 0L;
+    private long lastGcTime = 0L;
     
     @SuppressWarnings("unused")
     private MemCheck plugin;
@@ -39,18 +39,18 @@ public class GcStatsTask extends BukkitRunnable
     @Override
     public void run()
     {
-        long gcCount = 0;
-        long gcTime = 0;
+        long gcCount = 0L;
+        long gcTime = 0L;
 
         for(GarbageCollectorMXBean gc : ManagementFactory.getGarbageCollectorMXBeans())
         {
             long count = gc.getCollectionCount();
-            if(count >= 0)
+            if(count >= 0L)
             {
                 gcCount += count;
             }
             long time = gc.getCollectionTime();
-            if(time >= 0)
+            if(time >= 0L)
             {
                 gcTime += time;
             }
@@ -59,13 +59,13 @@ public class GcStatsTask extends BukkitRunnable
         long deltaGcCount = gcCount - lastGcCount;
         long deltaGcTime = gcTime - lastGcTime;
         
-        if (deltaGcCount > 0)
+        if (deltaGcCount > 0L)
         {
             gcAvg = deltaGcTime / deltaGcCount;
         }
         else
         {
-            gcAvg = 0;
+            gcAvg = 0L;
         }
         
         lastGcCount = gcCount;
