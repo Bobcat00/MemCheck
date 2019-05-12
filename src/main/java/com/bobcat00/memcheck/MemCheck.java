@@ -17,12 +17,22 @@
 package com.bobcat00.memcheck;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 public class MemCheck extends JavaPlugin
 {
+    GcStatsTask gcStats;
+    private BukkitTask gcStatsTask;
+    
     @Override
     public void onEnable()
     {
+        // Start periodic task
+        gcStats = new GcStatsTask(this);
+        gcStatsTask = gcStats.runTaskTimer(this,     // plugin
+                                           0L,       // delay
+                                           60L*20L); // period
+        
         // Register commands
         this.getCommand("mem").setExecutor(new Commands(this));
     }
@@ -31,6 +41,8 @@ public class MemCheck extends JavaPlugin
     public void onDisable()
     {
         // HandlerList.unregisterAll(listeners);
+        
+        gcStatsTask.cancel();
     }
 
 }

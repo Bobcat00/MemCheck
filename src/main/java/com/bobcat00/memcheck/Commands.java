@@ -16,8 +16,6 @@
 
 package com.bobcat00.memcheck;
 
-import java.lang.management.GarbageCollectorMXBean;
-import java.lang.management.ManagementFactory;
 import java.text.DecimalFormat;
 
 import org.bukkit.Bukkit;
@@ -32,7 +30,6 @@ import net.ess3.api.IEssentials;
 
 public class Commands implements CommandExecutor
 {
-    @SuppressWarnings("unused")
     private MemCheck plugin;
     
     public Commands(MemCheck plugin)
@@ -88,27 +85,7 @@ public class Commands implements CommandExecutor
             
             // GC stats
             
-            long gcCount = 0;
-            long gcTime = 0;
-
-            for(GarbageCollectorMXBean gc : ManagementFactory.getGarbageCollectorMXBeans())
-            {
-                long count = gc.getCollectionCount();
-                if(count >= 0)
-                {
-                    gcCount += count;
-                }
-                long time = gc.getCollectionTime();
-                if(time >= 0)
-                {
-                    gcTime += time;
-                }
-            }
-            long gcAvg = 0;
-            if (gcCount > 0)
-            {
-                gcAvg = gcTime / gcCount;
-            }
+            long gcAvg = plugin.gcStats.gcAvg;
             
             // Output message
             
