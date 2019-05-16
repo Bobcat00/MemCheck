@@ -16,6 +16,7 @@
 
 package com.bobcat00.memcheck;
 
+import java.lang.management.ManagementFactory;
 import java.text.DecimalFormat;
 
 import org.bukkit.Bukkit;
@@ -25,6 +26,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+
+import com.sun.management.OperatingSystemMXBean;
 
 import net.ess3.api.IEssentials;
 
@@ -74,6 +77,20 @@ public class Commands implements CommandExecutor
                 tpsColor = ChatColor.RED;
             }
             
+            // CPU load
+            
+            OperatingSystemMXBean os = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
+            
+            double cpuLoad = os.getProcessCpuLoad();
+            if (cpuLoad >= 0.0)
+            {
+                cpuLoad = cpuLoad * 100.0;
+            }
+            else
+            {
+                cpuLoad = 0.0;
+            }
+            
             // Used and free memory
             
             long freeMemory  = Runtime.getRuntime().freeMemory();
@@ -90,11 +107,13 @@ public class Commands implements CommandExecutor
             // Output message
             
             DecimalFormat df1 = new DecimalFormat("#.0");
+            DecimalFormat df0 = new DecimalFormat("#");
             
-            sender.sendMessage(ChatColor.GOLD + "TPS: "   + tpsColor + df1.format(tps)    +
-                               ChatColor.GOLD + " Used: " + ChatColor.RED + used/1048576L + " MB (" + (used*100L)/maxMemory + "%)" +
-                               ChatColor.GOLD + " Free: " + ChatColor.RED + free/1048576L + " MB" +
-                               ChatColor.GOLD + " GC: "   + ChatColor.RED + gcAvg         + " ms");
+            sender.sendMessage(ChatColor.GOLD + "TPS: "   + tpsColor + df1.format(tps)          +
+                               ChatColor.GOLD + " CPU: "  + ChatColor.RED + df0.format(cpuLoad) + "%" +
+                               ChatColor.GOLD + " Used: " + ChatColor.RED + used/1048576L       + " MB (" + (used*100L)/maxMemory + "%)" +
+                               ChatColor.GOLD + " Free: " + ChatColor.RED + free/1048576L       + " MB" +
+                               ChatColor.GOLD + " GC: "   + ChatColor.RED + gcAvg               + " ms");
 
             // Normal return
             return true;

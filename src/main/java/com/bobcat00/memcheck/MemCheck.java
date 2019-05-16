@@ -23,6 +23,8 @@ import java.util.List;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
+import com.sun.management.OperatingSystemMXBean;
+
 public class MemCheck extends JavaPlugin
 {
     GcStatsTask gcStats;
@@ -41,8 +43,10 @@ public class MemCheck extends JavaPlugin
         this.getCommand("mem").setExecutor(new Commands(this));
         
         // Log related items which are unchanging
+        OperatingSystemMXBean os = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
         getLogger().info("Number of processors: " + Runtime.getRuntime().availableProcessors());
-        getLogger().info("Maximum memory: " + Runtime.getRuntime().maxMemory()/1048576L + " MB");
+        getLogger().info("Physical memory: " + os.getTotalPhysicalMemorySize()/1048576L + " MB");
+        getLogger().info("Maximum heap: " + Runtime.getRuntime().maxMemory()/1048576L + " MB");
         
         RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
         List<String> arguments = runtimeMxBean.getInputArguments();
