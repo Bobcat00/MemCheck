@@ -17,6 +17,7 @@
 package com.bobcat00.memcheck;
 
 import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.util.List;
 
@@ -47,6 +48,19 @@ public class MemCheck extends JavaPlugin
         getLogger().info("Number of processors: " + Runtime.getRuntime().availableProcessors());
         getLogger().info("Physical memory: " + os.getTotalPhysicalMemorySize()/1048576L + " MB");
         getLogger().info("Maximum heap: " + Runtime.getRuntime().maxMemory()/1048576L + " MB");
+        
+        for (MemoryPoolMXBean memoryMXBean : ManagementFactory.getMemoryPoolMXBeans())
+        {
+            if ("Metaspace".equals(memoryMXBean.getName()))
+            {
+                long maxMetaspace = memoryMXBean.getUsage().getMax();
+                if (maxMetaspace >= 0)
+                {
+                    getLogger().info("Maximum metaspace: " + maxMetaspace/1048576L + " MB");
+                }
+                break;
+            }
+        }
         
         RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
         List<String> arguments = runtimeMxBean.getInputArguments();

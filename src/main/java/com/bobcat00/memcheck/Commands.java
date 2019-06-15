@@ -17,6 +17,7 @@
 package com.bobcat00.memcheck;
 
 import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryPoolMXBean;
 import java.text.DecimalFormat;
 
 import org.bukkit.Bukkit;
@@ -51,6 +52,9 @@ public class Commands implements CommandExecutor
                 return true;
             }
             
+            final DecimalFormat df1 = new DecimalFormat("#.0");
+            final DecimalFormat df0 = new DecimalFormat("#");
+            
             // TPS
             
             // Hook in to Essentials
@@ -59,12 +63,7 @@ public class Commands implements CommandExecutor
             double tps = ess.getTimer().getAverageTPS();
             
             ChatColor tpsColor;
-            if (tps > 20.0)
-            {
-                tps = 20.0;
-                tpsColor = ChatColor.GREEN;
-            }
-            else if (tps >= 18.0)
+            if (tps >= 18.0)
             {
                 tpsColor = ChatColor.GREEN;
             }
@@ -81,17 +80,20 @@ public class Commands implements CommandExecutor
             
             OperatingSystemMXBean os = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
             
-            double cpuLoad = os.getProcessCpuLoad();
+            double cpuLoad = os.getProcessCpuLoad(); // may be < 0.0
+            
+            // GC stats
+            
+            long gcAvg = plugin.gcStats.gcAvg;
+            
+            StringBuilder cpu = new StringBuilder(ChatColor.GOLD + "TPS: " + tpsColor + df1.format(tps));
             if (cpuLoad >= 0.0)
             {
-                cpuLoad = cpuLoad * 100.0;
+                cpu.append(ChatColor.GOLD + " CPU: " + ChatColor.RED + df0.format(cpuLoad*100.0) + "%");
             }
-            else
-            {
-                cpuLoad = 0.0;
-            }
+            cpu.append(ChatColor.GOLD + " GC: " + ChatColor.RED + gcAvg + " ms");
             
-            // Used and free memory
+            // Heap
             
             long freeMemory  = Runtime.getRuntime().freeMemory();
             long maxMemory   = Runtime.getRuntime().maxMemory();
@@ -100,20 +102,42 @@ public class Commands implements CommandExecutor
             long used = totalMemory - freeMemory;
             long free = maxMemory - used;
             
-            // GC stats
+            String heap = ChatColor.GOLD + "Heap Used: " + ChatColor.RED + used/1048576L        + " MB (" + (used*100L)/maxMemory + "%)" +
+                          ChatColor.GOLD + " Free: "     + ChatColor.RED + free/1048576L        + " MB" +
+                          ChatColor.GOLD + " Alloc: "    + ChatColor.RED + totalMemory/1048576L + " MB";
             
-            long gcAvg = plugin.gcStats.gcAvg;
+            // Metaspace
             
-            // Output message
+            long usedMetaspace  = 0;
+            long allocMetaspace = 0;
+            long maxMetaspace   = -1;
+            long freeMetaspace  = 0; // max - used
             
-            DecimalFormat df1 = new DecimalFormat("#.0");
-            DecimalFormat df0 = new DecimalFormat("#");
+            for (MemoryPoolMXBean memoryMXBean : ManagementFactory.getMemoryPoolMXBeans())
+            {
+                if ("Metaspace".equals(memoryMXBean.getName()))
+                {
+                    usedMetaspace = memoryMXBean.getUsage().getUsed();
+                    allocMetaspace = memoryMXBean.getUsage().getCommitted();
+                    maxMetaspace   = memoryMXBean.getUsage().getMax(); // may be -1
+                    break;
+                }
+            }
             
-            sender.sendMessage(ChatColor.GOLD + "TPS: "   + tpsColor + df1.format(tps)          +
-                               ChatColor.GOLD + " CPU: "  + ChatColor.RED + df0.format(cpuLoad) + "%" +
-                               ChatColor.GOLD + " Used: " + ChatColor.RED + used/1048576L       + " MB (" + (used*100L)/maxMemory + "%)" +
-                               ChatColor.GOLD + " Free: " + ChatColor.RED + free/1048576L       + " MB" +
-                               ChatColor.GOLD + " GC: "   + ChatColor.RED + gcAvg               + " ms");
+            StringBuilder meta = new StringBuilder(ChatColor.GOLD + "Metaspace Used: " + ChatColor.RED + usedMetaspace/1048576L + " MB");
+            if (maxMetaspace > 0)
+            {
+                meta.append(" (" + (usedMetaspace*100L)/maxMetaspace + "%)");
+                freeMetaspace = maxMetaspace - usedMetaspace;
+                meta.append(ChatColor.GOLD + " Free: " + ChatColor.RED + freeMetaspace/1048576L + " MB");
+            }
+            meta.append(ChatColor.GOLD + " Alloc: " + ChatColor.RED + allocMetaspace/1048576L + " MB");
+            
+            // Output messages
+            
+            String[] strArray = new String[] {cpu.toString(), heap, meta.toString()};
+            
+            sender.sendMessage(strArray);
 
             // Normal return
             return true;
