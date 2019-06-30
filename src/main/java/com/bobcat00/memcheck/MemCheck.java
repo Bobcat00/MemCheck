@@ -21,6 +21,7 @@ import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.util.List;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -42,6 +43,13 @@ public class MemCheck extends JavaPlugin
         
         // Register commands
         this.getCommand("mem").setExecutor(new Commands(this));
+        
+        // Metrics
+        Metrics metrics = new Metrics(this);
+        if (metrics.isEnabled())
+        {
+            getLogger().info("Enabled metrics. You may opt-out by changing plugins/bStats/config.yml");
+        }
         
         // Log related items which are unchanging
         OperatingSystemMXBean os = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
