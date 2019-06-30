@@ -59,21 +59,27 @@ public class Commands implements CommandExecutor
             
             // Hook in to Essentials
             Plugin essentials = Bukkit.getPluginManager().getPlugin("Essentials");
-            IEssentials ess = (IEssentials)essentials;
-            double tps = ess.getTimer().getAverageTPS();
             
-            ChatColor tpsColor;
-            if (tps >= 18.0)
+            double tps = -1.0;
+            ChatColor tpsColor = ChatColor.RED;
+            
+            if (essentials != null && essentials.isEnabled())
             {
-                tpsColor = ChatColor.GREEN;
-            }
-            else if (tps >= 15.0)
-            {
-                tpsColor = ChatColor.YELLOW;
-            }
-            else
-            {
-                tpsColor = ChatColor.RED;
+                IEssentials ess = (IEssentials)essentials;
+                tps = ess.getTimer().getAverageTPS();
+
+                if (tps >= 18.0)
+                {
+                    tpsColor = ChatColor.GREEN;
+                }
+                else if (tps >= 15.0)
+                {
+                    tpsColor = ChatColor.YELLOW;
+                }
+                else
+                {
+                    tpsColor = ChatColor.RED;
+                }
             }
             
             // CPU load
@@ -86,12 +92,16 @@ public class Commands implements CommandExecutor
             
             long gcAvg = plugin.gcStats.gcAvg;
             
-            StringBuilder cpu = new StringBuilder(ChatColor.GOLD + "TPS: " + tpsColor + df1.format(tps));
+            StringBuilder cpu = new StringBuilder();
+            if (tps >= 0.0)
+            {
+                cpu.append(ChatColor.GOLD + "TPS: " + tpsColor + df1.format(tps) + " ");
+            }
             if (cpuLoad >= 0.0)
             {
-                cpu.append(ChatColor.GOLD + " CPU: " + ChatColor.RED + df0.format(cpuLoad*100.0) + "%");
+                cpu.append(ChatColor.GOLD + "CPU: " + ChatColor.RED + df0.format(cpuLoad*100.0) + "% ");
             }
-            cpu.append(ChatColor.GOLD + " GC: " + ChatColor.RED + gcAvg + " ms");
+            cpu.append(ChatColor.GOLD + "GC: " + ChatColor.RED + gcAvg + " ms");
             
             // Heap
             

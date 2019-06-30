@@ -4,7 +4,7 @@ version: ${project.version}
 author: Bobcat00
 description: Output memory statistics
 api-version: 1.13
-depend: [Essentials]
+softdepend: [Essentials]
 commands:
   mem:
     description: Output memory statistics
