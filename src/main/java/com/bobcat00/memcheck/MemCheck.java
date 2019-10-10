@@ -70,6 +70,8 @@ public class MemCheck extends JavaPlugin
             }
         }
         
+        getLogger().info("server.properties view-distance: " + getServer().getViewDistance());
+        
         RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
         List<String> arguments = runtimeMxBean.getInputArguments();
         getLogger().info("Command line options: ");
