@@ -46,11 +46,10 @@ public class MemCheck extends JavaPlugin
         this.getCommand("mem").setExecutor(new Commands(this));
         
         // Metrics
-        Metrics metrics = new Metrics(this);
-        if (metrics.isEnabled())
-        {
-            getLogger().info("Enabled metrics. You may opt-out by changing plugins/bStats/config.yml");
-        }
+        int pluginId = 5018;
+        @SuppressWarnings("unused")
+        Metrics metrics = new Metrics(this, pluginId);
+        getLogger().info("Metrics enabled if allowed by plugins/bStats/config.yml");
         
         // Log related items which are unchanging
         OperatingSystemMXBean os = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
