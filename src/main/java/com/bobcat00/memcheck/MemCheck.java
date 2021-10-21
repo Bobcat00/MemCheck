@@ -16,6 +16,7 @@
 
 package com.bobcat00.memcheck;
 
+import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.RuntimeMXBean;
@@ -57,6 +58,7 @@ public class MemCheck extends JavaPlugin
         getLogger().info("Physical memory: " + os.getTotalPhysicalMemorySize()/1048576L + " MB");
         getLogger().info("Maximum heap: " + Runtime.getRuntime().maxMemory()/1048576L + " MB");
         
+        // Log maximum metaspace
         for (MemoryPoolMXBean memoryMXBean : ManagementFactory.getMemoryPoolMXBeans())
         {
             if ("Metaspace".equals(memoryMXBean.getName()))
@@ -70,8 +72,16 @@ public class MemCheck extends JavaPlugin
             }
         }
         
+        // Log garbage collector name(s)
+        for(GarbageCollectorMXBean gc : ManagementFactory.getGarbageCollectorMXBeans())
+        {
+            getLogger().info("GC name: " + gc.getName());
+        }
+        
+        // Log server view distance
         getLogger().info("server.properties view-distance: " + getServer().getViewDistance());
         
+        // Log command line options
         RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
         List<String> arguments = runtimeMxBean.getInputArguments();
         getLogger().info("Command line options: ");
