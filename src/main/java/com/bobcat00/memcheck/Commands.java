@@ -22,6 +22,7 @@ import java.text.DecimalFormat;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -101,7 +102,16 @@ public class Commands implements CommandExecutor
             {
                 cpu.append(ChatColor.GOLD + "CPU: " + ChatColor.RED + df0.format(cpuLoad*100.0) + "% ");
             }
-            cpu.append(ChatColor.GOLD + "GC: " + ChatColor.RED + gcAvg + " ms");
+            cpu.append(ChatColor.GOLD + "GC: " + ChatColor.RED + gcAvg + " ms ");
+            
+            // Chunks
+            
+            int chunks = 0;
+            for (World world : plugin.getServer().getWorlds())
+            {
+                chunks += world.getLoadedChunks().length;
+            }
+            cpu.append(ChatColor.GOLD + "Chunks: " + ChatColor.RED + chunks);
             
             // Heap
             
