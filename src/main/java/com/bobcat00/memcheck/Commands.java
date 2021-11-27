@@ -29,6 +29,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import com.earth2me.essentials.EssentialsTimer;
 import com.sun.management.OperatingSystemMXBean;
 
 import net.ess3.api.IEssentials;
@@ -67,19 +68,23 @@ public class Commands implements CommandExecutor
             if (essentials != null && essentials.isEnabled())
             {
                 IEssentials ess = (IEssentials)essentials;
-                tps = ess.getTimer().getAverageTPS();
+                EssentialsTimer timer = ess.getTimer();
+                if (timer != null)
+                {
+                    tps = timer.getAverageTPS();
 
-                if (tps >= 18.0)
-                {
-                    tpsColor = ChatColor.GREEN;
-                }
-                else if (tps >= 15.0)
-                {
-                    tpsColor = ChatColor.YELLOW;
-                }
-                else
-                {
-                    tpsColor = ChatColor.RED;
+                    if (tps >= 18.0)
+                    {
+                        tpsColor = ChatColor.GREEN;
+                    }
+                    else if (tps >= 15.0)
+                    {
+                        tpsColor = ChatColor.YELLOW;
+                    }
+                    else
+                    {
+                        tpsColor = ChatColor.RED;
+                    }
                 }
             }
             
