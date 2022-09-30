@@ -80,6 +80,16 @@ public class MemCheck extends JavaPlugin
         // Log server view distance
         getLogger().info("server.properties view-distance: " + getServer().getViewDistance());
         
+        // Log server simulation distance (1.18 and later)
+        try
+        {
+            getLogger().info("server.properties simulation-distance: " + getServer().getSimulationDistance());
+        }
+        catch (NoSuchMethodError e)
+        {
+            // ignore
+        }
+        
         // Log command line options
         RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
         List<String> arguments = runtimeMxBean.getInputArguments();
